@@ -23,6 +23,12 @@ export default function ThankYouPage() {
     }
   }, [router]);
 
+  const resetUser = () => {
+    localStorage.removeItem("gameCompleted");
+    localStorage.removeItem("user");
+    router.replace("/");
+  };
+
   if (!user) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -62,7 +68,7 @@ export default function ThankYouPage() {
         {/* Done button */}
         <button
           type="button"
-          onClick={() => router.replace("/")}
+          onClick={() => resetUser}
           className="mt-8 rounded-lg bg-black px-8 py-3 font-semibold text-white transition hover:bg-gray-800"
         >
           Done
