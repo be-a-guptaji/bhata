@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "name": "Hydrogen",
+    "image": "/images/hydrogen.png",
+    "isHasordous": false
+  },
+  {
+    "id": 2,
+    "name": "Oxygen",
+    "image": "/images/oxygen.png",
+    "isHasordous": false
+  },
+  {
+    "id": 3,
+    "name": "Nitrogen",
+    "image": "/images/nitrogen.png",
+    "isHasordous": false
+  },
+  {
+    "id": 4,
+    "name": "Chlorine",
+    "image": "/images/chlorine.png",
+    "isHasordous": true
+  },
+  {
+    "id": 5,
+    "name": "Helium",
+    "image": "/images/helium.png",
+    "isHasordous": false
+  },
+  {
+    "id": 6,
+    "name": "Methane",
+    "image": "/images/methane.png",
+    "isHasordous": true
+  },
+  {
+    "id": 7,
+    "name": "Carbon Dioxide",
+    "image": "/images/carbon-dioxide.png",
+    "isHasordous": false
+  },
+  {
+    "id": 8,
+    "name": "Ammonia",
+    "image": "/images/ammonia.png",
+    "isHasordous": true
+  },
+  {
+    "id": 9,
+    "name": "Carbon Monoxide",
+    "image": "/images/carbon-monoxide.png",
+    "isHasordous": true
+  },
+  {
+    "id": 10,
+    "name": "Argon",
+    "image": "/images/argon.png",
+    "isHasordous": false
+  },
+  {
+    "id": 11,
+    "name": "Sodium",
+    "image": "/images/sodium.png",
+    "isHasordous": true
+  },
+  {
+    "id": 12,
+    "name": "Potassium",
+    "image": "/images/potassium.png",
+    "isHasordous": true
+  },
+  {
+    "id": 13,
+    "name": "Iron",
+    "image": "/images/iron.png",
+    "isHasordous": false
+  },
+  {
+    "id": 14,
+    "name": "Copper",
+    "image": "/images/copper.png",
+    "isHasordous": false
+  },
+  {
+    "id": 15,
+    "name": "Mercury",
+    "image": "/images/mercury.png",
+    "isHasordous": true
+  },
+  {
+    "id": 16,
+    "name": "Lead",
+    "image": "/images/lead.png",
+    "isHasordous": true
+  },
+  {
+    "id": 17,
+    "name": "Zinc",
+    "image": "/images/zinc.png",
+    "isHasordous": false
+  },
+  {
+    "id": 18,
+    "name": "Aluminum",
+    "image": "/images/aluminum.png",
+    "isHasordous": false
+  },
+  {
+    "id": 19,
+    "name": "Calcium",
+    "image": "/images/calcium.png",
+    "isHasordous": false
+  },
+  {
+    "id": 20,
+    "name": "Magnesium",
+    "image": "/images/magnesium.png",
+    "isHasordous": true
+  },
+  {
+    "id": 21,
+    "name": "Sulfur",
+    "image": "/images/sulfur.png",
+    "isHasordous": true
+  },
+  {
+    "id": 22,
+    "name": "Phosphorus",
+    "image": "/images/phosphorus.png",
+    "isHasordous": true
+  },
+  {
+    "id": 23,
+    "name": "Bromine",
+    "image": "/images/bromine.png",
+    "isHasordous": true
+  },
+  {
+    "id": 24,
+    "name": "Iodine",
+    "image": "/images/iodine.png",
+    "isHasordous": true
+  },
+  {
+    "id": 25,
+    "name": "Neon",
+    "image": "/images/neon.png",
+    "isHasordous": false
+  },
+  {
+    "id": 26,
+    "name": "Krypton",
+    "image": "/images/krypton.png",
+    "isHasordous": false
+  },
+  {
+    "id": 27,
+    "name": "Xenon",
+    "image": "/images/xenon.png",
+    "isHasordous": false
+  },
+  {
+    "id": 28,
+    "name": "Radon",
+    "image": "/images/radon.png",
+    "isHasordous": true
+  },
+  {
+    "id": 29,
+    "name": "Ethanol",
+    "image": "/images/ethanol.png",
+    "isHasordous": true
+  },
+  {
+    "id": 30,
+    "name": "Acetone",
+    "image": "/images/acetone.png",
+    "isHasordous": true
+  },
+  {
+    "id": 31,
+    "name": "Benzene",
+    "image": "/images/benzene.png",
+    "isHasordous": true
+  },
+  {
+    "id": 32,
+    "name": "Toluene",
+    "image": "/images/toluene.png",
+    "isHasordous": true
+  },
+  {
+    "id": 33,
+    "name": "Glycerin",
+    "image": "/images/glycerin.png",
+    "isHasordous": false
+  },
+  {
+    "id": 34,
+    "name": "Hydrogen Peroxide",
+    "image": "/images/hydrogen-peroxide.png",
+    "isHasordous": true
+  },
+  {
+    "id": 35,
+    "name": "Nitric Acid",
+    "image": "/images/nitric-acid.png",
+    "isHasordous": true
+  },
+  {
+    "id": 36,
+    "name": "Sulfuric Acid",
+    "image": "/images/sulfuric-acid.png",
+    "isHasordous": true
+  },
+  {
+    "id": 37,
+    "name": "Hydrochloric Acid",
+    "image": "/images/hydrochloric-acid.png",
+    "isHasordous": true
+  },
+  {
+    "id": 38,
+    "name": "Sodium Chloride",
+    "image": "/images/sodium-chloride.png",
+    "isHasordous": false
+  },
+  {
+    "id": 39,
+    "name": "Calcium Carbonate",
+    "image": "/images/calcium-carbonate.png",
+    "isHasordous": false
+  },
+  {
+    "id": 40,
+    "name": "Silicon",
+    "image": "/images/silicon.png",
+    "isHasordous": false
+  },
+  {
+    "id": 41,
+    "name": "Lithium",
+    "image": "/images/lithium.png",
+    "isHasordous": true
+  },
+  {
+    "id": 42,
+    "name": "Fluorine",
+    "image": "/images/fluorine.png",
+    "isHasordous": true
+  },
+  {
+    "id": 43,
+    "name": "Nitrous Oxide",
+    "image": "/images/nitrous-oxide.png",
+    "isHasordous": false
+  },
+  {
+    "id": 44,
+    "name": "Propane",
+    "image": "/images/propane.png",
+    "isHasordous": true
+  },
+  {
+    "id": 45,
+    "name": "Butane",
+    "image": "/images/butane.png",
+    "isHasordous": true
+  },
+  {
+    "id": 46,
+    "name": "Ethylene",
+    "image": "/images/ethylene.png",
+    "isHasordous": true
+  },
+  {
+    "id": 47,
+    "name": "Acetic Acid",
+    "image": "/images/acetic-acid.png",
+    "isHasordous": true
+  },
+  {
+    "id": 48,
+    "name": "Sodium Hydroxide",
+    "image": "/images/sodium-hydroxide.png",
+    "isHasordous": true
+  },
+  {
+    "id": 49,
+    "name": "Potassium Nitrate",
+    "image": "/images/potassium-nitrate.png",
+    "isHasordous": true
+  },
+  {
+    "id": 50,
+    "name": "Distilled Water",
+    "image": "/images/distilled-water.png",
+    "isHasordous": false
+  }
+]
