@@ -68,7 +68,7 @@ export default function ThankYouPage() {
         {/* Done button */}
         <button
           type="button"
-          onClick={() => resetUser}
+          onClick={() => resetUser()}
           className="mt-8 rounded-lg bg-black px-8 py-3 font-semibold text-white transition hover:bg-gray-800"
         >
           Done
