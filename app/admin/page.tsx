@@ -12,8 +12,8 @@ type Answer = {
 
 type Result = {
   user: {
-    firstName: string;
-    lastName: string;
+    fullName: string;
+    token: string;
     id: string;
   };
   completionTime: number;
@@ -24,6 +24,8 @@ type Result = {
   percentage: number;
   submittedAt: string;
 };
+
+type SortOrder = "asc" | "desc" | null;
 
 function formatTime(milliseconds: number) {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -37,10 +39,84 @@ function formatTime(milliseconds: number) {
   )}`;
 }
 
+/*
+ * Sort icon
+ *
+ * null  = neutral
+ * asc   = ascending
+ * desc  = descending
+ */
+function SortIcon({ order }: { order: SortOrder }) {
+  if (order === "asc") {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        className="h-4 w-4"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 19V5m0 0-6 6m6-6 6 6"
+        />
+      </svg>
+    );
+  }
+
+  if (order === "desc") {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        className="h-4 w-4"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 5v14m0 0 6-6m-6 6-6-6"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      className="h-4 w-4"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m8 9 4-4 4 4M16 15l-4 4-4-4"
+      />
+    </svg>
+  );
+}
+
 export default function AdminPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [connected, setConnected] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  /*
+   * Sorting
+   *
+   * null  -> original submission order
+   * asc   -> ascending
+   * desc  -> descending
+   */
+  const [scoreOrder, setScoreOrder] = useState<SortOrder>(null);
+  const [timeOrder, setTimeOrder] = useState<SortOrder>(null);
 
   // Clear results modal
   const [showClearModal, setShowClearModal] = useState(false);
@@ -49,10 +125,35 @@ export default function AdminPage() {
   const [clearError, setClearError] = useState("");
 
   /*
-   * SSE connection
+   * Build SSE URL based on current sorting.
+   *
+   * Default:
+   * /api/admin/results
+   *
+   * Score:
+   * /api/admin/results?score=asc
+   * /api/admin/results?score=desc
+   *
+   * Time:
+   * /api/admin/results?time=asc
+   * /api/admin/results?time=desc
    */
   useEffect(() => {
-    const eventSource = new EventSource("/api/admin/results");
+    const params = new URLSearchParams();
+
+    if (scoreOrder !== null) {
+      params.set("score", scoreOrder);
+    } else if (timeOrder !== null) {
+      params.set("time", timeOrder);
+    }
+
+    const queryString = params.toString();
+
+    const url = queryString
+      ? `/api/admin/results?${queryString}`
+      : "/api/admin/results";
+
+    const eventSource = new EventSource(url);
 
     eventSource.onopen = () => {
       setConnected(true);
@@ -74,8 +175,37 @@ export default function AdminPage() {
 
     return () => {
       eventSource.close();
+      setConnected(false);
     };
-  }, []);
+  }, [scoreOrder, timeOrder]);
+
+  /*
+   * Cycle sorting:
+   *
+   * null -> asc
+   * asc  -> desc
+   * desc -> null
+   */
+  function cycleSort(
+    currentOrder: SortOrder,
+    setter: React.Dispatch<React.SetStateAction<SortOrder>>,
+    otherSetter: React.Dispatch<React.SetStateAction<SortOrder>>,
+  ) {
+    /*
+     * Only one sort can be active at a time.
+     */
+    otherSetter(null);
+
+    if (currentOrder === null) {
+      setter("asc");
+    } else if (currentOrder === "asc") {
+      setter("desc");
+    } else {
+      setter(null);
+    }
+
+    setExpandedIndex(null);
+  }
 
   /*
    * Open clear results modal
@@ -152,7 +282,13 @@ export default function AdminPage() {
     }
   }
 
-  const highestScore = results.length > 0 ? results[0].score : null;
+  const highestScore =
+    results.length > 0
+      ? Math.max(...results.map((result) => result.score))
+      : null;
+
+  const highestScoreTotal =
+    results.length > 0 ? results[0].totalQuestions : null;
 
   const fastestTime =
     results.length > 0
@@ -216,8 +352,8 @@ export default function AdminPage() {
             <p className="text-sm text-gray-500">Highest Score</p>
 
             <p className="mt-1 text-3xl font-bold text-gray-900">
-              {highestScore !== null
-                ? `${highestScore}/${results[0].totalQuestions}`
+              {highestScore !== null && highestScoreTotal !== null
+                ? `${highestScore}/${highestScoreTotal}`
                 : "-"}
             </p>
           </div>
@@ -247,11 +383,67 @@ export default function AdminPage() {
                   </th>
 
                   <th className="px-6 py-4 text-sm font-semibold text-gray-600">
-                    Score
+                    Token
                   </th>
 
+                  {/* Score */}
                   <th className="px-6 py-4 text-sm font-semibold text-gray-600">
-                    Time
+                    <button
+                      type="button"
+                      onClick={() =>
+                        cycleSort(scoreOrder, setScoreOrder, setTimeOrder)
+                      }
+                      className="group flex items-center gap-2 rounded-md transition hover:text-gray-900"
+                      title={
+                        scoreOrder === null
+                          ? "Sort by score ascending"
+                          : scoreOrder === "asc"
+                            ? "Sort by score descending"
+                            : "Clear score sorting"
+                      }
+                    >
+                      <span>Score</span>
+
+                      <span
+                        className={`transition ${
+                          scoreOrder === null
+                            ? "text-gray-400 group-hover:text-gray-700"
+                            : "text-black"
+                        }`}
+                      >
+                        <SortIcon order={scoreOrder} />
+                      </span>
+                    </button>
+                  </th>
+
+                  {/* Time */}
+                  <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        cycleSort(timeOrder, setTimeOrder, setScoreOrder)
+                      }
+                      className="group flex items-center gap-2 rounded-md transition hover:text-gray-900"
+                      title={
+                        timeOrder === null
+                          ? "Sort by time ascending"
+                          : timeOrder === "asc"
+                            ? "Sort by time descending"
+                            : "Clear time sorting"
+                      }
+                    >
+                      <span>Time</span>
+
+                      <span
+                        className={`transition ${
+                          timeOrder === null
+                            ? "text-gray-400 group-hover:text-gray-700"
+                            : "text-black"
+                        }`}
+                      >
+                        <SortIcon order={timeOrder} />
+                      </span>
+                    </button>
                   </th>
 
                   <th className="px-6 py-4 text-sm font-semibold text-gray-600">
@@ -264,7 +456,7 @@ export default function AdminPage() {
                 {results.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={6}
                       className="px-6 py-12 text-center text-gray-500"
                     >
                       No results yet.
@@ -299,13 +491,18 @@ export default function AdminPage() {
                           <td className="px-6 py-4">
                             <div>
                               <p className="font-semibold text-gray-900">
-                                {result.user.firstName} {result.user.lastName}
+                                {result.user.fullName}
                               </p>
 
                               <p className="text-xs text-gray-400">
                                 ID: {result.user.id}
                               </p>
                             </div>
+                          </td>
+
+                          {/* Token */}
+                          <td className="px-6 py-4 font-sans text-sm text-gray-700">
+                            {result.user.token}
                           </td>
 
                           {/* Score */}
@@ -346,7 +543,7 @@ export default function AdminPage() {
                         {/* Expanded details */}
                         {isExpanded && (
                           <tr className="border-b bg-gray-50">
-                            <td colSpan={5} className="px-4 py-6 sm:px-6">
+                            <td colSpan={6} className="px-4 py-6 sm:px-6">
                               <div>
                                 {/* Details header */}
                                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -356,8 +553,7 @@ export default function AdminPage() {
                                     </h3>
 
                                     <p className="text-sm text-gray-500">
-                                      {result.user.firstName}{" "}
-                                      {result.user.lastName}
+                                      {result.user.fullName}
                                     </p>
                                   </div>
 
@@ -527,7 +723,7 @@ export default function AdminPage() {
                 placeholder="Enter password"
                 autoFocus
                 disabled={clearing}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:bg-gray-100 text-black"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-black outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 disabled:bg-gray-100"
               />
             </div>
 

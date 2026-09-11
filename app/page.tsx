@@ -7,8 +7,8 @@ import { getUser, saveUser } from "@/app/lib/user";
 export default function Home() {
   const router = useRouter();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [token, setToken] = useState("");
 
   const [userChecked, setUserChecked] = useState(false);
 
@@ -38,8 +38,8 @@ export default function Home() {
     e.preventDefault();
 
     saveUser({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      fullName: fullName.trim(),
+      token: token.trim(),
       id: crypto.randomUUID(),
     });
 
@@ -84,18 +84,18 @@ export default function Home() {
               {/* First Name */}
               <div>
                 <label
-                  htmlFor="firstName"
+                  htmlFor="fullName"
                   className="mb-2 block text-sm font-medium text-gray-700"
                 >
-                  First Name
+                  Full Name
                 </label>
 
                 <input
-                  id="firstName"
+                  id="fullName"
                   type="text"
-                  placeholder="Enter your first name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Enter your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   required
                   autoComplete="given-name"
                   className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
@@ -105,19 +105,18 @@ export default function Home() {
               {/* Last Name */}
               <div>
                 <label
-                  htmlFor="lastName"
+                  htmlFor="token"
                   className="mb-2 block text-sm font-medium text-gray-700"
                 >
-                  Last Name
+                  Token
                 </label>
 
                 <input
-                  id="lastName"
+                  id="token"
                   type="text"
-                  placeholder="Enter your last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
+                  placeholder="Enter token"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
                   autoComplete="family-name"
                   className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
                 />

@@ -47,7 +47,7 @@ export default function ThankYouPage() {
 
         {/* Name */}
         <h1 className="mb-4 text-3xl font-bold text-gray-900">
-          Thank you, {user.firstName}!
+          Thank you, {user.fullName}!
         </h1>
 
         {/* Main message */}

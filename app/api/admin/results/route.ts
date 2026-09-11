@@ -24,8 +24,8 @@ type Answer = {
 
 type Result = {
   user: {
-    firstName: string;
-    lastName: string;
+    fullName: string;
+    token: string;
     id: string;
   };
   completionTime: number;
@@ -38,23 +38,13 @@ type Result = {
 };
 
 /*
- * Sort:
- *
- * 1. Highest score first
- * 2. If score is equal, fastest time first
- */
-function sortResults(results: Result[]) {
-  return [...results].sort((a, b) => {
-    if (b.score !== a.score) {
-      return b.score - a.score;
-    }
-
-    return a.completionTime - b.completionTime;
-  });
-}
-
-/*
  * Read results.json
+ *
+ * IMPORTANT:
+ * Do NOT sort here.
+ *
+ * The order in results.json is the submission order:
+ * first submitted = first in the array.
  */
 async function getResults(): Promise<Result[]> {
   try {
@@ -66,7 +56,7 @@ async function getResults(): Promise<Result[]> {
       return [];
     }
 
-    return sortResults(results);
+    return results;
   } catch (error) {
     console.error("Failed to read results:", error);
 
@@ -82,6 +72,9 @@ async function getResults(): Promise<Result[]> {
 export async function GET(request: NextRequest) {
   const encoder = new TextEncoder();
 
+  const scoreOrder = request.nextUrl.searchParams.get("score");
+  const timeOrder = request.nextUrl.searchParams.get("time");
+
   let watcher: ReturnType<typeof watch> | null = null;
   let heartbeat: ReturnType<typeof setInterval> | null = null;
 
@@ -89,31 +82,6 @@ export async function GET(request: NextRequest) {
     async start(controller) {
       let closed = false;
 
-      /*
-       * Send current results
-       */
-      const sendResults = async () => {
-        if (closed) {
-          return;
-        }
-
-        const results = await getResults();
-
-        const payload = JSON.stringify({
-          results,
-          updatedAt: new Date().toISOString(),
-        });
-
-        try {
-          controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
-        } catch {
-          cleanup();
-        }
-      };
-
-      /*
-       * Cleanup
-       */
       const cleanup = () => {
         if (closed) {
           return;
@@ -138,17 +106,53 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      /*
-       * Send results immediately when admin connects.
-       */
+      const sendResults = async () => {
+        if (closed) {
+          return;
+        }
+
+        let results = await getResults();
+
+        /*
+         * Default:
+         * Keep submission order from results.json.
+         *
+         * Score:
+         * ?score=asc  -> lowest to highest
+         * ?score=desc -> highest to lowest
+         *
+         * Time:
+         * ?time=asc   -> fastest to slowest
+         * ?time=desc  -> slowest to fastest
+         */
+        if (scoreOrder === "asc") {
+          results = [...results].sort((a, b) => a.score - b.score);
+        } else if (scoreOrder === "desc") {
+          results = [...results].sort((a, b) => b.score - a.score);
+        } else if (timeOrder === "asc") {
+          results = [...results].sort(
+            (a, b) => a.completionTimeSeconds - b.completionTimeSeconds,
+          );
+        } else if (timeOrder === "desc") {
+          results = [...results].sort(
+            (a, b) => b.completionTimeSeconds - a.completionTimeSeconds,
+          );
+        }
+
+        const payload = JSON.stringify({
+          results,
+          updatedAt: new Date().toISOString(),
+        });
+
+        try {
+          controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+        } catch {
+          cleanup();
+        }
+      };
+
       await sendResults();
 
-      /*
-       * Watch results.json.
-       *
-       * When a game is submitted or results are cleared,
-       * the SSE client gets updated automatically.
-       */
       try {
         watcher = watch(
           RESULTS_FILE,
@@ -167,9 +171,6 @@ export async function GET(request: NextRequest) {
         console.error("Failed to watch results file:", error);
       }
 
-      /*
-       * Keep SSE connection alive.
-       */
       heartbeat = setInterval(() => {
         if (!closed) {
           try {
@@ -180,9 +181,6 @@ export async function GET(request: NextRequest) {
         }
       }, 15000);
 
-      /*
-       * Browser disconnected.
-       */
       request.signal.addEventListener("abort", cleanup);
     },
 
@@ -208,6 +206,7 @@ export async function GET(request: NextRequest) {
     },
   });
 }
+
 
 /*
  * DELETE
