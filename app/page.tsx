@@ -40,7 +40,9 @@ export default function Home() {
     saveUser({
       fullName: fullName.trim(),
       token: token.trim(),
-      id: crypto.randomUUID(),
+      id:
+        crypto.randomUUID?.() ??
+        `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     });
 
     router.replace("/game");
